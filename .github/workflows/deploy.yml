@@ -1,4 +1,4 @@
-name: Deploy to ECS
+name: Deploy to AWS
 
 on:
   push:
@@ -8,11 +8,6 @@ on:
 
 env:
   AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
-  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY || 'lastdance-api' }}
-  ECS_SERVICE: ${{ secrets.ECS_SERVICE || 'lastdance-api' }}
-  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER || 'lastdance-cluster' }}
-  ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION || 'lastdance-api' }}
-  CONTAINER_NAME: ${{ secrets.CONTAINER_NAME || 'lastdance-api' }}
 
 jobs:
   deploy:
@@ -31,22 +26,11 @@ jobs:
         aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         aws-region: ${{ env.AWS_REGION }}
 
-    - name: Login to Amazon ECR
-      id: login-ecr
-      uses: aws-actions/amazon-ecr-login@v2
-
-    - name: Build, tag, and push image to Amazon ECR
-      env:
-        ECR_REGISTRY: ${{ steps.login-ecr.outputs.registry }}
-        IMAGE_TAG: ${{ github.sha }}
-      run: |
-        docker build -t $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG .
-        docker push $ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG
-        echo "::set-output name=image::$ECR_REGISTRY/$ECR_REPOSITORY:$IMAGE_TAG"
-
     - name: Install Serverless Framework
       run: npm install -g serverless
 
-    - name: Deploy to ECS
+    - name: Deploy to AWS
       run: |
+        cd api
+        npm install
         serverless deploy --stage prod

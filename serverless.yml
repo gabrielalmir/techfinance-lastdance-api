@@ -5,7 +5,6 @@ frameworkVersion: '3'
 plugins:
   - serverless-dotenv-plugin
   - serverless-offline
-  - serverless-ecs-plugin
 
 custom:
   dotenv:
@@ -23,30 +22,6 @@ custom:
     useChildProcesses: true
     environment:
       IS_OFFLINE: 'true'
-  ecs:
-    clusterName: lastdance-cluster-${opt:stage, 'dev'}
-    taskDefinition:
-      cpu: 256
-      memory: 512
-      executionRole: ecsTaskExecutionRole
-      taskRole: ecsTaskRole
-    service:
-      desiredCount: 1
-      deploymentConfiguration:
-        maximumPercent: 200
-        minimumHealthyPercent: 50
-      capacityProviderStrategy:
-        - capacityProvider: FARGATE_SPOT
-          weight: 1
-    loadBalancer:
-      targetGroupName: lastdance-tg-${opt:stage, 'dev'}
-      containerPort: 4000
-      containerName: lastdance-api
-      healthCheckPath: /health
-      healthCheckIntervalSeconds: 30
-      healthCheckTimeoutSeconds: 5
-      healthyThresholdCount: 2
-      unhealthyThresholdCount: 3
 
 provider:
   name: aws
