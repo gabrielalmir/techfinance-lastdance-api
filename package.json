@@ -11,8 +11,7 @@
     "deploy": "serverless deploy",
     "deploy:dev": "serverless deploy --stage dev",
     "deploy:prod": "serverless deploy --stage prod",
-    "offline": "pnpm build && serverless offline",
-    "test": "jest"
+    "offline": "pnpm build && serverless offline"
   },
   "keywords": [
     "lastdance",
