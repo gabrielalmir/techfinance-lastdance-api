@@ -1,0 +1,138 @@
+service: lastdance-api
+
+frameworkVersion: '3'
+
+plugins:
+  - serverless-dotenv-plugin
+  - serverless-offline
+  - serverless-ecs-plugin
+
+custom:
+  dotenv:
+    path: .env.${opt:stage, 'dev'}
+    include:
+      - DYNAMODB_TABLE
+      - S3_BUCKET
+      - AWS_REGION
+  serverless-offline:
+    httpPort: 4000
+    lambdaPort: 4002
+    noPrependStageInUrl: true
+    lambdaEndpoint: http://localhost:4002
+    useDocker: false
+    useChildProcesses: true
+    environment:
+      IS_OFFLINE: 'true'
+  ecs:
+    clusterName: lastdance-cluster-${opt:stage, 'dev'}
+    taskDefinition:
+      cpu: 256
+      memory: 512
+      executionRole: ecsTaskExecutionRole
+      taskRole: ecsTaskRole
+    service:
+      desiredCount: 1
+      deploymentConfiguration:
+        maximumPercent: 200
+        minimumHealthyPercent: 50
+      capacityProviderStrategy:
+        - capacityProvider: FARGATE_SPOT
+          weight: 1
+    loadBalancer:
+      targetGroupName: lastdance-tg-${opt:stage, 'dev'}
+      containerPort: 4000
+      containerName: lastdance-api
+      healthCheckPath: /health
+      healthCheckIntervalSeconds: 30
+      healthCheckTimeoutSeconds: 5
+      healthyThresholdCount: 2
+      unhealthyThresholdCount: 3
+
+provider:
+  name: aws
+  region: ${env:AWS_REGION, 'us-east-1'}
+  environment:
+    DYNAMODB_TABLE: ${env:DYNAMODB_TABLE, 'lastdance-lastdance-products'}
+    S3_BUCKET: ${env:S3_BUCKET, 'lastdance-lastdance-bucket'}
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:Query
+            - dynamodb:Scan
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:DeleteItem
+          Resource:
+            - "arn:aws:dynamodb:${opt:region, self:provider.region}:*:table/${self:provider.environment.DYNAMODB_TABLE}"
+        - Effect: Allow
+          Action:
+            - s3:PutObject
+            - s3:GetObject
+            - s3:DeleteObject
+          Resource:
+            - "arn:aws:s3:::${self:provider.environment.S3_BUCKET}/*"
+
+functions:
+  api:
+    handler: dist/handler.handler
+    events:
+      - httpApi:
+          path: /{proxy+}
+          method: any
+
+resources:
+  Resources:
+    ProductsTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: ${self:provider.environment.DYNAMODB_TABLE}
+        AttributeDefinitions:
+          - AttributeName: id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+    ImagesBucket:
+      Type: AWS::S3::Bucket
+      Properties:
+        BucketName: ${self:provider.environment.S3_BUCKET}
+        CorsConfiguration:
+          CorsRules:
+            - AllowedHeaders:
+                - "*"
+              AllowedMethods:
+                - GET
+                - PUT
+                - POST
+                - DELETE
+              AllowedOrigins:
+                - "*"
+              MaxAge: 3000
+    ecsTaskExecutionRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: ecs-tasks.amazonaws.com
+              Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/service-role/AmazonECSTaskExecutionRolePolicy
+    ecsTaskRole:
+      Type: AWS::IAM::Role
+      Properties:
+        AssumeRolePolicyDocument:
+          Version: '2012-10-17'
+          Statement:
+            - Effect: Allow
+              Principal:
+                Service: ecs-tasks.amazonaws.com
+              Action: sts:AssumeRole
+        ManagedPolicyArns:
+          - arn:aws:iam::aws:policy/AmazonDynamoDBFullAccess
+          - arn:aws:iam::aws:policy/AmazonS3FullAccess

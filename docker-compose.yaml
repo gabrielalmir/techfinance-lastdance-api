@@ -1,0 +1,14 @@
+services:
+  api:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      - AWS_REGION=us-east-1
+      - AWS_ACCESS_KEY_ID=test
+      - AWS_SECRET_ACCESS_KEY=test
+      - IS_OFFLINE=true
+      - BUCKET_NAME=${BUCKET_NAME}
+    volumes:
+      - "./logs:/app/logs"
+    command: ["pnpm", "dev"]

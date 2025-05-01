@@ -1,0 +1,5 @@
+onlyBuiltDependencies:
+  - aws-sdk
+  - es5-ext
+  - esbuild
+  - serverless

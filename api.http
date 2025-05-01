@@ -1,0 +1,11 @@
+### Criar produto com imagem (base64)
+POST http://localhost:8080/produtos
+Content-Type: application/json
+
+{
+  "name": "Produto Exemplo",
+  "description": "Descrição do produto",
+  "price_in_cents": 1000,
+  "category": "Categoria Exemplo",
+  "image": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+P+/HgAFPQJAjA6L8QAAAABJRU5ErkJggg=="
+}
