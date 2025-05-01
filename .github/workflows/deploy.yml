@@ -7,12 +7,12 @@ on:
     branches: [ main ]
 
 env:
-  AWS_REGION: us-east-1
-  ECR_REPOSITORY: lastdance-api
-  ECS_SERVICE: lastdance-api
-  ECS_CLUSTER: lastdance-cluster
-  ECS_TASK_DEFINITION: lastdance-api
-  CONTAINER_NAME: lastdance-api
+  AWS_REGION: ${{ secrets.AWS_REGION || 'us-east-1' }}
+  ECR_REPOSITORY: ${{ secrets.ECR_REPOSITORY || 'lastdance-api' }}
+  ECS_SERVICE: ${{ secrets.ECS_SERVICE || 'lastdance-api' }}
+  ECS_CLUSTER: ${{ secrets.ECS_CLUSTER || 'lastdance-cluster' }}
+  ECS_TASK_DEFINITION: ${{ secrets.ECS_TASK_DEFINITION || 'lastdance-api' }}
+  CONTAINER_NAME: ${{ secrets.CONTAINER_NAME || 'lastdance-api' }}
 
 jobs:
   deploy:
