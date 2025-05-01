@@ -5,13 +5,14 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "start": "node dist/server.cjs",
-    "dev": "tsx watch src/server.ts",
-    "build": "tsup src --format cjs,esm --dts --clean",
+    "start": "node dist/handler.cjs",
+    "dev": "serverless offline",
+    "build": "tsc",
     "deploy": "serverless deploy",
     "deploy:dev": "serverless deploy --stage dev",
     "deploy:prod": "serverless deploy --stage prod",
-    "offline": "pnpm build && serverless offline"
+    "offline": "pnpm build && serverless offline",
+    "test": "jest"
   },
   "keywords": [
     "lastdance",
