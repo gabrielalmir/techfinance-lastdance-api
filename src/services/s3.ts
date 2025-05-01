@@ -1,12 +1,13 @@
+import env from "@/config/env";
 import { CreateBucketCommand, HeadBucketCommand, PutObjectCommand, S3Client } from "@aws-sdk/client-s3";
 import logger from "../utils/logger";
 
-const isOffline = process.env.IS_OFFLINE === 'true';
+const isOffline = env.IS_OFFLINE;
 const endpoint = isOffline ? 'http://localhost:4566' : undefined;
 
 const client = new S3Client({
     endpoint,
-    region: process.env.AWS_REGION || 'us-east-1',
+    region: env.AWS_REGION || 'us-east-1',
     credentials: {
         accessKeyId: 'test',
         secretAccessKey: 'test'
@@ -14,7 +15,7 @@ const client = new S3Client({
     forcePathStyle: true
 });
 
-const BUCKET_NAME = process.env.S3_BUCKET || 'lastdance-lastdance-bucket';
+const BUCKET_NAME = env.S3_BUCKET || 'lastdance-lastdance-bucket';
 
 async function ensureBucketExists() {
     try {

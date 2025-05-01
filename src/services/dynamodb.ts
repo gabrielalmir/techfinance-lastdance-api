@@ -1,14 +1,15 @@
+import env from "@/config/env";
 import { CreateTableCommand, DescribeTableCommand, DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import { DeleteCommand, DynamoDBDocumentClient, GetCommand, PutCommand, ScanCommand } from "@aws-sdk/lib-dynamodb";
 import { Product } from "../models/Product";
 import logger from "../utils/logger";
 
-const isOffline = process.env.IS_OFFLINE === 'true';
+const isOffline = env.IS_OFFLINE;
 const endpoint = isOffline ? 'http://localhost:4566' : undefined;
 
 const client = new DynamoDBClient({
     endpoint,
-    region: process.env.AWS_REGION || 'us-east-1',
+    region: env.AWS_REGION,
     credentials: {
         accessKeyId: 'test',
         secretAccessKey: 'test'
@@ -16,7 +17,7 @@ const client = new DynamoDBClient({
 });
 
 const docClient = DynamoDBDocumentClient.from(client);
-const TABLE_NAME = process.env.DYNAMODB_TABLE || 'lastdance-lastdance-products';
+const TABLE_NAME = env.DYNAMODB_TABLE || 'lastdance-lastdance-products';
 
 async function ensureTableExists() {
     try {

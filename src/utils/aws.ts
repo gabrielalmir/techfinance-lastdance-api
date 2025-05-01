@@ -1,11 +1,12 @@
+import env from "@/config/env";
 import {
     DynamoDBClient,
     DynamoDBClientConfig
 } from "@aws-sdk/client-dynamodb";
 import { S3Client, S3ClientConfig } from "@aws-sdk/client-s3";
 
-const isOffline = process.env.IS_OFFLINE;
-const region = process.env.AWS_REGION;
+const isOffline = env.IS_OFFLINE;
+const region = env.AWS_REGION;
 
 const localstackConfig = {
     endpoint: "http://localhost:4566",
@@ -23,6 +24,6 @@ export const ddbClient = new DynamoDBClient(config);
 const s3Config: S3ClientConfig = isOffline ? {
     ...localstackConfig,
     forcePathStyle: true,
-} : { region, endpoint: `https://s3.${process.env.AWS_REGION}.amazonaws.com` };
+} : { region, endpoint: `https://s3.${env.AWS_REGION}.amazonaws.com` };
 
 export const s3Client = new S3Client(s3Config);

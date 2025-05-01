@@ -2,38 +2,26 @@
   "name": "lastdance-api",
   "version": "1.0.0",
   "description": "",
-  "main": "index.js",
+  "main": "dist/server.cjs",
   "type": "module",
   "scripts": {
-    "start": "node dist/handler.cjs",
-    "dev": "serverless offline",
-    "build": "tsc",
-    "deploy": "serverless deploy",
-    "deploy:dev": "serverless deploy --stage dev",
-    "deploy:prod": "serverless deploy --stage prod",
-    "offline": "pnpm build && serverless offline"
+    "start": "node dist/server.cjs",
+    "dev": "tsx watch src/server.ts",
+    "build": "tsup src"
   },
   "keywords": [
     "lastdance",
     "api",
-    "serverless",
-    "aws",
-    "lambda",
-    "dynamodb",
-    "s3"
+    "node",
+    "hono"
   ],
   "author": "gabrielalmir",
   "license": "ISC",
   "packageManager": "pnpm@10.8.0",
   "devDependencies": {
-    "@types/aws-lambda": "^8.10.149",
     "@types/node": "^22.14.1",
-    "@types/serverless": "^3.12.17",
-    "serverless": "^3.40.0",
-    "serverless-dotenv-plugin": "^6.0.0",
-    "serverless-offline": "^13.3.3",
     "tsup": "^8.4.0",
-    "tsx": "^4.19.3",
+    "tsx": "^4.7.1",
     "typescript": "^5.8.3"
   },
   "dependencies": {
@@ -42,7 +30,6 @@
     "@aws-sdk/lib-dynamodb": "^3.789.0",
     "@hono/node-server": "^1.14.1",
     "@hono/zod-validator": "^0.4.3",
-    "aws-lambda": "^1.0.7",
     "dotenv": "^16.5.0",
     "hono": "^4.7.7",
     "winston": "^3.17.0",
