@@ -38,24 +38,12 @@ products.use('/*', cors({
 
 products.get("/", async (c) => {
     const list = await listProducts();
-
-    c.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    c.header('Pragma', 'no-cache');
-    c.header('Expires', '0');
-    c.header('Surrogate-Control', 'no-store');
-
     return c.json(list);
 });
 
 products.get("/:id", async (c) => {
     const id = c.req.param("id");
     const product = await getProduct(id);
-
-    c.header('Cache-Control', 'no-store, no-cache, must-revalidate, proxy-revalidate');
-    c.header('Pragma', 'no-cache');
-    c.header('Expires', '0');
-    c.header('Surrogate-Control', 'no-store');
-
     return product ? c.json(product) : c.notFound();
 });
 
