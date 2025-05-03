@@ -74,11 +74,16 @@ techfinance-lastdance-api/
    pnpm install
    ```
 
-3. Configure o arquivo `.env` com as variáveis de ambiente necessárias:
+3. Configure o arquivo `.env` com as variáveis de ambiente necessárias (valores padrão já definidos no código):
    ```env
+   NODE_ENV=development
+   PORT=3000
    AWS_REGION=us-east-1
-   BUCKET_NAME=nome-do-bucket-aqui-por-favor-digite-algo
+   AWS_ACCESS_KEY_ID=test
+   AWS_SECRET_ACCESS_KEY=test
    IS_OFFLINE=true
+   S3_BUCKET=lastdance-lastdance-bucket
+   DYNAMODB_TABLE=lastdance-lastdance-products
    ```
 
 4. Inicie os serviços com Docker Compose:
